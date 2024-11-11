@@ -51,6 +51,10 @@ const router = createBrowserRouter([
         element: <ValidateSession element={lazyLoading("Login")} />,
       },
       {
+        path: "register",
+        element: <ValidateSession element={lazyLoading("Register")} />,
+      },
+      {
         path: "/home",
         element: <Private element={lazyLoading("Home")} />,
         children: [

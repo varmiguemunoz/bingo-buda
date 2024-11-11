@@ -6,7 +6,7 @@ import "@/styles/index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <div className="w-full mx-auto p-0 m-0 h-screen overflow-hidden">
+    <div className="w-full p-0 m-0 h-screen overflow-hidden font-ubuntu">
       <Routes />
     </div>
   </StrictMode>
