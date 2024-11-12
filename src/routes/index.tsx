@@ -7,8 +7,6 @@ import {
 import lazyLoading from "@/utils/lazyLoading";
 import useUsers from "@/hooks/useUsers";
 
-// type Role = "administrador" | "lider" | "usuario";
-
 type privateProps = {
   element: React.JSX.Element;
   redirectRoute?: string;
@@ -65,6 +63,14 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <Private element={lazyLoading("Dashboard")} />,
+          },
+          {
+            path: "game",
+            element: <Private element={lazyLoading("Game")} />,
+          },
+          {
+            path: "room",
+            element: <Private element={lazyLoading("Room")} />,
           },
         ],
       },

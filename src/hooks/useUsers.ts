@@ -1,5 +1,5 @@
 const useUsers = () => {
-  const currentUser = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const currentUser = sessionStorage.getItem("accessToken");
 
   return {
     currentUser,

@@ -1,7 +1,46 @@
+import { setUser } from "@/redux/features/authSlice";
+import { publicHttpClient } from "@/utils/httpClient";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
 export default function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(e.currentTarget));
+      const { email, password } = formData;
+
+      const payload = {
+        email: email,
+        password: password,
+      };
+
+      const response = await publicHttpClient.post("/auth/login", payload);
+
+      const { accessToken, refreshToken } = response.data;
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      sessionStorage.setItem("user", JSON.stringify(response.data.user));
+
+      dispatch(setUser(response.data.user));
+      navigate("/home/dashboard");
+      toast.success("Sesión iniciada");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al iniciar sesión");
+    }
+  };
+
   return (
     <main className="h-screen w-full  mx-auto max-w-sm flex flex-col items-center justify-center">
-      <form className="w-full h-auto bg-gray-100 border-gray-200 border px-6 py-10 rounded-lg flex flex-col gap-4">
+      <form
+        className="w-full h-auto bg-gray-100 border-gray-200 border px-6 py-10 rounded-lg flex flex-col gap-4"
+        onSubmit={handleLoginSubmit}
+      >
         <h1 className="font-bold text-gray-800 text-xl text-center">
           Iniciar Sesión
         </h1>
