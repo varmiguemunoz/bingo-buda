@@ -4,6 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState: any = {
   game: {},
   bingoTable: {},
+  games: [],
+  users: [],
   error: "",
   isLoading: false,
   isJoin: false,
@@ -15,6 +17,16 @@ export const gameSlice = createSlice({
   reducers: {
     setGame: (state, action) => {
       state.game = action.payload;
+      state.error = null;
+    },
+
+    setAllGames: (state, action) => {
+      state.games = action.payload;
+      state.error = null;
+    },
+
+    setUsers: (state, action) => {
+      state.users = action.payload;
       state.error = null;
     },
 
@@ -34,10 +46,20 @@ export const gameSlice = createSlice({
     setIsJoin: (state, action) => {
       state.isJoin = action.payload;
     },
+
+    resetState: () => initialState,
   },
 });
 
-export const { setGame, setError, setIsLoading, setIsJoin, setBingoTable } =
-  gameSlice.actions;
+export const {
+  setGame,
+  setError,
+  setIsLoading,
+  setIsJoin,
+  setBingoTable,
+  setAllGames,
+  resetState,
+  setUsers,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

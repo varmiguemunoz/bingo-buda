@@ -15,7 +15,7 @@ const persistConfig = {
   key: "root",
   storage,
   // We add here what does not change frequently
-  whitelist: ["auth", "game"],
+  whitelist: ["auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

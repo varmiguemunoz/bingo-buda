@@ -9,7 +9,7 @@ import { ReduxProvider } from "./redux/reduxProvider";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ReduxProvider>
-      <div className="w-full p-0 m-0 h-screen overflow-hidden font-ubuntu">
+      <div className="w-full p-0 m-0 font-ubuntu">
         <Toaster />
         <Routes />
       </div>

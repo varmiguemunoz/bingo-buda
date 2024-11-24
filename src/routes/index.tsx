@@ -65,12 +65,14 @@ const router = createBrowserRouter([
             element: <Private element={lazyLoading("Dashboard")} />,
           },
           {
-            path: "game",
+            path: "game/:id",
             element: <Private element={lazyLoading("Game")} />,
-          },
-          {
-            path: "room",
-            element: <Private element={lazyLoading("Room")} />,
+            children: [
+              {
+                path: "room/:roomId",
+                element: <Private element={lazyLoading("Room")} />,
+              },
+            ],
           },
         ],
       },
