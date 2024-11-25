@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 
-export default function Counter() {
+export default function Counter({
+  gameId,
+}: {
+  gameId: number | string | undefined;
+}) {
   const [counter, setCounter] = useState(0);
 
   useEffect(() => {
@@ -17,7 +21,7 @@ export default function Counter() {
 
     // Limpiar el intervalo al desmontar el componente
     return () => clearInterval(interval);
-  }, []);
+  }, [gameId]);
 
   return (
     <div className="mb-12">

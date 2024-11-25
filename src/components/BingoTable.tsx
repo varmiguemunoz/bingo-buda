@@ -23,7 +23,7 @@ export default function BingoTable({
   );
 
   return (
-    <div className=" bg-white shadow-md rounded-lg  w-full max-w-md mx-auto mt-8 overflow-hidden">
+    <div className="bg-white shadow-md rounded-lg w-full max-w-md mx-auto overflow-hidden">
       <div className="grid grid-cols-5 gap-px bg-gray-200">
         {bingoLetters.map((letter) => (
           <div

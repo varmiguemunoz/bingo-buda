@@ -10,7 +10,7 @@ function StartGame({ handleStartGame, gameId }: StartGameProps) {
   return (
     <section className="flex justify-between items-center">
       <div className="flex flex-col items-center justify-center">
-        <Counter />
+        <Counter gameId={gameId} />
         <button
           className="mx-auto w-full bg-blue-500 px-3 py-4 text-white font-bold rounded-md"
           onClick={() => handleStartGame()}

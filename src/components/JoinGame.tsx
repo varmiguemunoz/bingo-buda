@@ -12,7 +12,7 @@ interface JoinGameProps {
 }
 
 export default function JoinGame() {
-  const { dispatch, getAllGames } = useUsers();
+  const { getAllGames } = useUsers();
 
   const { games } = useSelector(
     (state: RootState) => state.game
@@ -20,15 +20,16 @@ export default function JoinGame() {
 
   useEffect(() => {
     getAllGames();
-  }, [dispatch, getAllGames]);
+  }, [getAllGames]);
 
   return (
     <div className="flex flex-col gap-6 shadow-md w-1/2 h-[400px] bg-slate-100 px-4 py-6">
       <h1 className="text-xl font-bold text-gray-700">Unirse a un Juego</h1>
 
       {games.length > 0 ? (
-        games.map(({ id }) => (
+        games.map(({ id }, index) => (
           <a
+            key={index}
             href={`/home/game/${id}`}
             className="flex flex-col items-center justify-center w-full bg-white rounded-md cursor-pointer py-4 px-4"
           >

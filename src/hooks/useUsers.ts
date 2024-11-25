@@ -4,12 +4,14 @@ import {
   setIsLoading,
   setAllGames,
   setUsers,
+  setGame,
 } from "@/redux/features/gameSlice";
 import { RootState } from "@/redux/store";
 import { httpClient } from "@/utils/httpClient";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useCallback } from "react";
 
 const useUsers = () => {
   const { game, isJoin, isLoading, users } = useSelector(
@@ -40,17 +42,25 @@ const useUsers = () => {
 
   const handleStartGame = async (gameId: number) => {
     try {
-      await httpClient.post(`/game/${gameId}/start`);
+      dispatch(setIsLoading(true));
+      const response = await httpClient.post(`/game/${gameId}/start`);
 
-      navigate("/home/room");
+      const { rooms } = response.data;
+      const roomId = rooms[0].id;
+
+      dispatch(setGame(response.data));
+
+      navigate(`/home/game/${gameId}/room/${roomId}`);
 
       toast.success("Juego iniciado exitosamente");
     } catch (error: any) {
       toast.error("Error al iniciar el juego: ", error.message);
+    } finally {
+      dispatch(setIsLoading(false));
     }
   };
 
-  const getAllGames = async () => {
+  const getAllGames = useCallback(async () => {
     try {
       dispatch(setIsLoading(true));
       const games = await httpClient.get("/game");
@@ -61,20 +71,20 @@ const useUsers = () => {
     } finally {
       dispatch(setIsLoading(false));
     }
-  };
+  }, [dispatch]);
 
-  const getUsersInGame = async (gameId: number) => {
-    try {
-      dispatch(setIsLoading(true));
-      const users = await httpClient.get(`/game/${gameId}/users`);
-      dispatch(setUsers(users.data));
-    } catch (error: any) {
-      toast.error("Error al cargar las partidas: ", error.message);
-      throw error;
-    } finally {
-      dispatch(setIsLoading(false));
-    }
-  };
+  const getUsersInGame = useCallback(
+    async (gameId: number | string) => {
+      try {
+        const users = await httpClient.get(`/game/${gameId}/users`);
+        dispatch(setUsers(users.data));
+      } catch (error: any) {
+        toast.error("Error al cargar los usuarios: ", error.message);
+        throw error;
+      }
+    },
+    [dispatch]
+  );
 
   return {
     currentUser,
