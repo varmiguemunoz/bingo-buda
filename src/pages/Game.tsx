@@ -30,7 +30,9 @@ export default function Game() {
                   Iniciar Juego
                 </button>
               </div>
-              <UserList />
+              <div className="w-1/2">
+                <UserList />
+              </div>
             </section>
           ) : (
             <button

@@ -11,16 +11,16 @@ interface UserListProps {
 }
 
 export default function UserList() {
-  const { id } = useParams() as { id: string };
-  const { getUsersInGame } = useUsers();
+  const { id: gameId } = useParams() as { id: string };
+  const { getUsersInGame, user } = useUsers();
 
   const { users } = useSelector(
     (state: RootState) => state.game
   ) as UserListProps;
 
   useEffect(() => {
-    getUsersInGame(id);
-  }, [getUsersInGame, id]);
+    getUsersInGame(gameId);
+  }, [getUsersInGame, gameId]);
 
   return (
     <div className="flex flex-col gap-6 shadow-md w-full h-[400px] bg-slate-100 px-4 py-6">
@@ -33,7 +33,7 @@ export default function UserList() {
             className="flex flex-col items-center justify-center w-full bg-white rounded-md cursor-pointer py-4 px-4"
           >
             <h1 className="text-blue-500 font-medium text-lg">
-              Jugador Numero {id}
+              {id === user.id ? "Tu" : `Jugador Numero ${id}`}
             </h1>
           </div>
         ))

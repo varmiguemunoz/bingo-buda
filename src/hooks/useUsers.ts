@@ -18,6 +18,10 @@ const useUsers = () => {
     (state: RootState) => state.game
   );
 
+  const { user } = useSelector((state: RootState) => state.auth) as {
+    user: { id: number };
+  };
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -34,7 +38,8 @@ const useUsers = () => {
 
       toast.success("Unido exitosamente a la partida");
     } catch (error: any) {
-      toast.error("Error al unirse a la partida: ", error.message);
+      toast.error("Error al unirse a la partida");
+      throw error;
     } finally {
       dispatch(setIsLoading(false));
     }
@@ -54,9 +59,19 @@ const useUsers = () => {
 
       toast.success("Juego iniciado exitosamente");
     } catch (error: any) {
-      toast.error("Error al iniciar el juego: ", error.message);
+      toast.error("Error al iniciar el juego");
+      throw error;
     } finally {
       dispatch(setIsLoading(false));
+    }
+  };
+
+  const handleDrawBallot = async (gameId: number) => {
+    try {
+      return await httpClient.patch(`/game/${gameId}/draw-ball`);
+    } catch (error) {
+      toast.error("Error al sacar la balota");
+      throw error;
     }
   };
 
@@ -78,8 +93,8 @@ const useUsers = () => {
       try {
         const users = await httpClient.get(`/game/${gameId}/users`);
         dispatch(setUsers(users.data));
-      } catch (error: any) {
-        toast.error("Error al cargar los usuarios: ", error.message);
+      } catch (error) {
+        toast.error("Error al cargar los usuarios");
         throw error;
       }
     },
@@ -88,11 +103,13 @@ const useUsers = () => {
 
   return {
     currentUser,
+    user,
     dispatch,
     handleJoinGame,
     handleStartGame,
     getAllGames,
     getUsersInGame,
+    handleDrawBallot,
     isJoin,
     isLoading,
     game,

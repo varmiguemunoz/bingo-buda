@@ -2,14 +2,28 @@
 import JoinGame from "@/components/JoinGame";
 import { setGame, setIsLoading } from "@/redux/features/gameSlice";
 import { httpClient } from "@/utils/httpClient";
+import socket from "@/utils/socket";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    socket.on("GameCreated", (data) => {
+      console.log("Evento recibido: GameCreated", data);
+      dispatch(setGame(data));
+
+      toast.success("Juego creado en tiempo real");
+    });
+
+    return () => {
+      socket.off("GameCreated");
+    };
+  }, [dispatch]);
 
   const StartGame = async () => {
     try {
@@ -19,7 +33,7 @@ export default function Dashboard() {
 
       navigate(`/home/game/${request.data.id}`); // pagina dinamica
 
-      toast.success("Juego iniciado exitosamente");
+      // toast.success("Juego iniciado exitosamente");
     } catch (error: any) {
       toast.error("Error al iniciar el juego: ", error.message);
     } finally {

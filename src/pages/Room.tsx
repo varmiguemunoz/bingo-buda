@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import BingoTable from "@/components/BingoTable";
+import ShowBall from "@/components/ShowBall";
 import Spinner from "@/components/Spinner";
 import UserList from "@/components/UserList";
+import useUsers from "@/hooks/useUsers";
 import { setBingoTable, setIsLoading } from "@/redux/features/gameSlice";
 import { RootState } from "@/redux/store";
 import { httpClient } from "@/utils/httpClient";
@@ -18,6 +20,13 @@ export default function Room() {
     (state: RootState) => state.game
   );
   const { user } = useSelector((state: RootState) => state.auth);
+
+  const { handleDrawBallot } = useUsers();
+
+  const isHostUser =
+    Array.isArray(game.players) && game.players.length > 0
+      ? game.players[0].id === user.id
+      : false;
 
   const dispatch = useDispatch();
 
@@ -49,14 +58,23 @@ export default function Room() {
       ) : (
         <div className="flex items-start justify-between gap-10 w-full">
           <div className="flex flex-col items-center justify-center w-1/2 gap-5">
-            <div className="px-10 py-10 bg-gray-400 rounded-md w-full">
-              <h2 className="text-center font-bold text-xl text-white">B1</h2>
-            </div>
+            <ShowBall />
             <div className="flex items-center justify-between w-full gap-8">
               <BingoTable numbers={bingoTable.numbers} />
-              <button className="bg-blue-500 px-4 py-4 w-[200px] text-white font-bold rounded-md">
-                Bingo
-              </button>
+              <div className="flex flex-col gap-10">
+                {isHostUser && (
+                  <button
+                    className="bg-blue-500 px-4 py-4 w-[200px] text-white font-bold rounded-md"
+                    onClick={() => handleDrawBallot(game.id)}
+                  >
+                    Sacar Balota
+                  </button>
+                )}
+
+                <button className="bg-blue-500 px-4 py-4 w-[200px] text-white font-bold rounded-md">
+                  Bingo
+                </button>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-8 w-1/2">

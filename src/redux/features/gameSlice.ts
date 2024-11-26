@@ -6,6 +6,7 @@ const initialState: any = {
   bingoTable: {},
   games: [],
   users: [],
+  bingoBalls: [],
   error: "",
   isLoading: false,
   isJoin: false,
@@ -35,6 +36,11 @@ export const gameSlice = createSlice({
       state.error = null;
     },
 
+    setBingoBalls: (state, action) => {
+      state.bingoBalls = action.payload;
+      state.error = null;
+    },
+
     setError: (state, action) => {
       state.error = action.payload;
       state.user = null;
@@ -57,6 +63,7 @@ export const {
   setIsLoading,
   setIsJoin,
   setBingoTable,
+  setBingoBalls,
   setAllGames,
   resetState,
   setUsers,
