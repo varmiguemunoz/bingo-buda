@@ -4,8 +4,11 @@ import Spinner from "@/components/Spinner";
 import UserList from "@/components/UserList";
 import useUsers from "@/hooks/useUsers";
 import { RootState } from "@/redux/store";
+import { httpClient } from "@/utils/httpClient";
+import socket from "@/utils/socket";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 export default function Room() {
   const { game, isLoading, bingoTable } = useSelector(
@@ -13,7 +16,7 @@ export default function Room() {
   );
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const { handleDrawBallot, getTableBingo } = useUsers();
+  const { handleDrawBallot, getTableBingo, navigate } = useUsers();
 
   const isHostUser =
     Array.isArray(game.players) && game.players.length > 0
@@ -23,6 +26,43 @@ export default function Room() {
   useEffect(() => {
     getTableBingo(game.id, user.id);
   }, [game.id, getTableBingo, user.id]);
+
+  const handleBingo = async () => {
+    try {
+      const checkBingo = await httpClient.get(
+        `/game/${game.id}/check-bingo/${user.id}`
+      );
+
+      return checkBingo;
+    } catch (error) {
+      toast.error("Error al hacer el bingo");
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    socket.on("not-bingo", (data) => {
+      console.log("Evento recibido: not-bingo", data);
+
+      toast.error("Un usuario intento hacer bingo sin ganar el juego 🫢");
+      navigate("/home/dashboard");
+    });
+    return () => {
+      socket.off("not-bingo");
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    socket.on("game-winner", (data) => {
+      console.log("Evento recibido: game-winner", data);
+
+      toast.success("El ganador es: " + { data });
+      navigate("/home/dahsboard");
+    });
+    return () => {
+      socket.off("game-winner");
+    };
+  }, [navigate]);
 
   return (
     <div className="w-full h-full py-12 flex flex-col items-center justify-center">
@@ -44,7 +84,10 @@ export default function Room() {
                   </button>
                 )}
 
-                <button className="bg-blue-500 px-4 py-4 w-[200px] text-white font-bold rounded-md">
+                <button
+                  className="bg-blue-500 px-4 py-4 w-[200px] text-white font-bold rounded-md"
+                  onClick={handleBingo}
+                >
                   Bingo
                 </button>
               </div>

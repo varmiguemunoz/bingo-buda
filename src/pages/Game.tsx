@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RootState } from "@/redux/store";
 import useUsers from "@/hooks/useUsers";
 import Spinner from "@/components/Spinner";
@@ -13,16 +14,11 @@ import { toast } from "sonner";
 export default function Game() {
   const { id } = useParams() as { id: string };
 
-  const {
-    handleJoinGame,
-    handleStartGame,
-    isJoin,
-    isLoading,
-    dispatch,
-    navigate,
-  } = useUsers();
+  const { handleJoinGame, handleStartGame, isLoading, dispatch, navigate } =
+    useUsers();
 
   const { user } = useSelector((state: RootState) => state.auth);
+  const { game } = useSelector((state: RootState) => state.game);
 
   useEffect(() => {
     socket.on("game-started", (data) => {
@@ -42,13 +38,17 @@ export default function Game() {
     };
   }, [dispatch, navigate]);
 
+  const isUserJoin = !!(
+    game.players && game.players.find((player: any) => player.id === user.id)
+  );
+
   return (
     <div className="w-full ">
       {isLoading ? (
         <Spinner />
       ) : (
         <div className="w-full flex flex-col items-center justify-center">
-          {isJoin ? (
+          {isUserJoin ? (
             <section className="flex justify-between items-center w-full ">
               <div className="flex flex-col items-center justify-center w-1/2">
                 <Counter gameId={id} />

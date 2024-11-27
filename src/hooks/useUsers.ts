@@ -34,9 +34,10 @@ const useUsers = () => {
     try {
       dispatch(setIsLoading(true));
 
-      await httpClient.post(`/game/${gameId}/join/${userId}`);
+      const response = await httpClient.post(`/game/${gameId}/join/${userId}`);
 
       dispatch(setIsJoin(true));
+      dispatch(setGame(response.data));
 
       toast.success("Unido exitosamente a la partida");
     } catch (error: any) {
