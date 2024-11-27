@@ -1,42 +1,40 @@
-import { setBingoBalls } from "@/redux/features/gameSlice";
+import useUsers from "@/hooks/useUsers";
 import { RootState } from "@/redux/store";
-import { httpClient } from "@/utils/httpClient";
+import socket from "@/utils/socket";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { toast } from "sonner";
 
 function ShowBall() {
   const { id } = useParams() as { id: string };
 
   const { bingoBalls } = useSelector((state: RootState) => state.game);
 
-  const dispatch = useDispatch();
+  const { getBingoBalls } = useUsers();
 
   useEffect(() => {
-    const getBingoBalls = async () => {
-      try {
-        const request = await httpClient.get(`/game/${id}/bingo-balls`);
+    getBingoBalls(id);
+  }, [getBingoBalls, id]);
 
-        dispatch(setBingoBalls(request.data));
-      } catch (error) {
-        toast.error("Error al obtener los numeros del bingo ");
-        throw error;
-      }
+  useEffect(() => {
+    socket.on("ball-drawn", (data) => {
+      console.log("Evento recibido: ball-drawn", data);
+
+      getBingoBalls(id);
+    });
+
+    return () => {
+      socket.off("ball-drawn");
     };
-
-    getBingoBalls();
-  }, [dispatch, id]);
-
-  console.log(bingoBalls);
+  }, [getBingoBalls, id]);
 
   return (
-    <div className="px-10 py-10 bg-gray-400 rounded-md w-full">
+    <div className="px-10 py-10 bg-gray-400 rounded-md w-full flex items-center justify-center gap-4">
       {Array.isArray(bingoBalls) && bingoBalls.length > 0 ? (
         bingoBalls.map((item, index) => (
-          <h2 className="text-center font-bold text-xl text-white" key={index}>
-            {item}
-          </h2>
+          <div key={index}>
+            <h2 className="text-center font-bold text-xl text-white">{item}</h2>
+          </div>
         ))
       ) : (
         <h2 className="text-center font-bold text-xl text-white">

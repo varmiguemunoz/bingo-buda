@@ -1,6 +1,7 @@
 import useUsers from "@/hooks/useUsers";
 
 import { RootState } from "@/redux/store";
+import socket from "@/utils/socket";
 
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -17,6 +18,18 @@ export default function JoinGame() {
   const { games } = useSelector(
     (state: RootState) => state.game
   ) as JoinGameProps;
+
+  useEffect(() => {
+    socket.on("GameCreated", (data) => {
+      console.log("Evento recibido: GameCreated", data);
+
+      getAllGames();
+    });
+
+    return () => {
+      socket.off("GameCreated");
+    };
+  }, [getAllGames]);
 
   useEffect(() => {
     getAllGames();

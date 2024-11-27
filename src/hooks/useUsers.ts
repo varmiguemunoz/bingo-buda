@@ -5,6 +5,8 @@ import {
   setAllGames,
   setUsers,
   setGame,
+  setBingoTable,
+  setBingoBalls,
 } from "@/redux/features/gameSlice";
 import { RootState } from "@/redux/store";
 import { httpClient } from "@/utils/httpClient";
@@ -57,7 +59,7 @@ const useUsers = () => {
 
       navigate(`/home/game/${gameId}/room/${roomId}`);
 
-      toast.success("Juego iniciado exitosamente");
+      toast.success("Juego iniciado");
     } catch (error: any) {
       toast.error("Error al iniciar el juego");
       throw error;
@@ -101,6 +103,36 @@ const useUsers = () => {
     [dispatch]
   );
 
+  const getTableBingo = useCallback(
+    async (gameId: number | string, userId: number) => {
+      try {
+        const request = await httpClient.get(`/game/${gameId}/card/${userId}`);
+
+        dispatch(setBingoTable(request.data));
+
+        toast.success("Tabla de bingo generada");
+      } catch (error: any) {
+        toast.error("Error al obtener la tabla de bingo");
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  const getBingoBalls = useCallback(
+    async (gameId: number | string) => {
+      try {
+        const request = await httpClient.get(`/game/${gameId}/bingo-balls`);
+
+        dispatch(setBingoBalls(request.data));
+      } catch (error) {
+        toast.error("Error al obtener los numeros del bingo");
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
   return {
     currentUser,
     user,
@@ -110,6 +142,9 @@ const useUsers = () => {
     getAllGames,
     getUsersInGame,
     handleDrawBallot,
+    getTableBingo,
+    getBingoBalls,
+    navigate,
     isJoin,
     isLoading,
     game,

@@ -5,13 +5,42 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Counter from "@/components/Counter";
 import UserList from "@/components/UserList";
+import { useEffect } from "react";
+import socket from "@/utils/socket";
+import { setGame } from "@/redux/features/gameSlice";
+import { toast } from "sonner";
 
 export default function Game() {
   const { id } = useParams() as { id: string };
 
-  const { handleJoinGame, handleStartGame, isJoin, isLoading } = useUsers();
+  const {
+    handleJoinGame,
+    handleStartGame,
+    isJoin,
+    isLoading,
+    dispatch,
+    navigate,
+  } = useUsers();
 
   const { user } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    socket.on("game-started", (data) => {
+      console.log("Evento recibido: game-started", data);
+
+      dispatch(setGame(data));
+
+      const roomId = data.rooms[0].id;
+
+      navigate(`/home/game/${data.id}/room/${roomId}`);
+
+      toast.success("Juego iniciado");
+    });
+
+    return () => {
+      socket.off("game-started");
+    };
+  }, [dispatch, navigate]);
 
   return (
     <div className="w-full ">

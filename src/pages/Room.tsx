@@ -1,55 +1,28 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import BingoTable from "@/components/BingoTable";
 import ShowBall from "@/components/ShowBall";
 import Spinner from "@/components/Spinner";
 import UserList from "@/components/UserList";
 import useUsers from "@/hooks/useUsers";
-import { setBingoTable, setIsLoading } from "@/redux/features/gameSlice";
 import { RootState } from "@/redux/store";
-import { httpClient } from "@/utils/httpClient";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 export default function Room() {
-  // 1. Boton de sacar las balotas y irlas presentando en el tablero de balotas
-  // 2. Boton de validar si el jugador ha ganado (bingo)
-  // 3. Conectar websockets para recibir informaicion en tiempo real
-
   const { game, isLoading, bingoTable } = useSelector(
     (state: RootState) => state.game
   );
   const { user } = useSelector((state: RootState) => state.auth);
 
-  const { handleDrawBallot } = useUsers();
+  const { handleDrawBallot, getTableBingo } = useUsers();
 
   const isHostUser =
     Array.isArray(game.players) && game.players.length > 0
       ? game.players[0].id === user.id
       : false;
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    const getTableBingo = async () => {
-      try {
-        dispatch(setIsLoading(true));
-
-        const request = await httpClient.get(
-          `/game/${game.id}/card/${user.id}`
-        );
-
-        dispatch(setBingoTable(request.data));
-      } catch (error: any) {
-        console.log(error);
-        toast.error("Error al obtener la tabla de bingo: ", error.message);
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-
-    getTableBingo();
-  }, [dispatch, game.id, user.id]);
+    getTableBingo(game.id, user.id);
+  }, [game.id, getTableBingo, user.id]);
 
   return (
     <div className="w-full h-full py-12 flex flex-col items-center justify-center">

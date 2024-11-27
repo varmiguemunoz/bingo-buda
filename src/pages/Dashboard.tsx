@@ -17,7 +17,7 @@ export default function Dashboard() {
       console.log("Evento recibido: GameCreated", data);
       dispatch(setGame(data));
 
-      toast.success("Juego creado en tiempo real");
+      toast.success("Nuevo juego creado");
     });
 
     return () => {
@@ -33,7 +33,6 @@ export default function Dashboard() {
 
       navigate(`/home/game/${request.data.id}`); // pagina dinamica
 
-      // toast.success("Juego iniciado exitosamente");
     } catch (error: any) {
       toast.error("Error al iniciar el juego: ", error.message);
     } finally {
